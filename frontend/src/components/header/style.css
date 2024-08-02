@@ -1,0 +1,27 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    width: fit-content;
+    flex-direction: column;
+}
+
+.header-title {
+    font-size: 2rem;
+    padding: 0.5rem 0;
+}
+
+.header-subtitle {
+    font-size: 1.25rem;
+}
+
+.title-area {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-inputs-area {
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem 0;
+    align-items: center;
+}
