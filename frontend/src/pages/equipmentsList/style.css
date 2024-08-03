@@ -5,3 +5,22 @@
 .button-load {
     padding: 1rem;
 }
+
+.infos-area {
+    display: flex;
+    flex-direction: column;
+    min-height: 80vh;
+}
+
+.table-info-area {
+    min-width: 30%;
+}
+
+.graphic-info-area {
+    display: flex;
+    padding-right: 1rem;
+    padding-top: 1rem;
+    align-self: center;
+    min-width: 70%;
+    min-height: 50%;
+}

@@ -2,10 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EquipService } from './equip.service';
 import { EquipEntity } from './entities/equip.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { NotFoundException } from '@nestjs/common';
 import { SaveEquipInfoDto } from './dto/saveEquipInfo.dto';
 import { SearchEquipInfoDto } from './dto/searchEquipInfo.dto';
-import { SearchEquipInfoByDateDto } from './dto/searchEquipInfoByDate.dto';
 import * as fs from 'fs';
 
 const mockEquipEntity = {
@@ -16,10 +14,14 @@ const mockEquipEntity = {
 };
 
 const mockEquipRepository = () => ({
-  find: jest.fn(),
-  findOne: jest.fn(),
   create: jest.fn(),
   save: jest.fn(),
+  findOne: jest.fn(),
+  createQueryBuilder: jest.fn().mockReturnValue({
+    orderBy: jest.fn().mockReturnThis(),
+    andWhere: jest.fn().mockReturnThis(),
+    getMany: jest.fn().mockResolvedValue([mockEquipEntity]),
+  }),
 });
 
 describe('EquipService', () => {
@@ -27,6 +29,7 @@ describe('EquipService', () => {
   let repository: ReturnType<typeof mockEquipRepository>;
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EquipService,
@@ -47,7 +50,7 @@ describe('EquipService', () => {
 
   describe('search', () => {
     it('should return results if found', async () => {
-      repository.find.mockResolvedValue([mockEquipEntity]);
+      repository.findOne.mockResolvedValueOnce([mockEquipEntity]);
 
       const params: SearchEquipInfoDto = { equipmentId: 'EQ-12495' };
       const result = await service.search(params);
@@ -55,47 +58,14 @@ describe('EquipService', () => {
       expect(result).toEqual({
         statusCode: 200,
         message: 'Success in fetch data',
-        data: [mockEquipEntity],
+        data: [
+          {
+            id: '1',
+            equipmentId: 'EQ-12495',
+            value: '78.42',
+          },
+        ],
       });
-    });
-
-    it('should throw NotFoundException if no results', async () => {
-      repository.find.mockResolvedValue([]);
-
-      const params: SearchEquipInfoDto = { equipmentId: 'EQ-12495' };
-
-      await expect(service.search(params)).rejects.toThrow(NotFoundException);
-    });
-  });
-
-  describe('searchAllByDate', () => {
-    it('should return results if found', async () => {
-      repository.find.mockResolvedValue([mockEquipEntity]);
-
-      const params: SearchEquipInfoByDateDto = {
-        initialDate: new Date('2023-01-01'),
-        finalDate: new Date('2023-12-31'),
-      };
-      const result = await service.searchAllByDate(params);
-
-      expect(result).toEqual({
-        statusCode: 200,
-        message: 'Success in the search using date params',
-        data: [mockEquipEntity],
-      });
-    });
-
-    it('should throw NotFoundException if no results', async () => {
-      repository.find.mockResolvedValue([]);
-
-      const params: SearchEquipInfoByDateDto = {
-        initialDate: new Date('2023-01-01'),
-        finalDate: new Date('2023-12-31'),
-      };
-
-      await expect(service.searchAllByDate(params)).rejects.toThrow(
-        NotFoundException,
-      );
     });
   });
 

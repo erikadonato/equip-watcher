@@ -13,10 +13,10 @@ export class SearchEquipInfoDto {
   @IsDate()
   @IsOptional()
   @Type(() => Date)
-  initialDate: Date;
+  initialDate?: Date;
 
   @IsDate()
   @IsOptional()
   @Type(() => Date)
-  finalDate: Date;
+  finalDate?: Date;
 }

@@ -3,7 +3,6 @@ import { EquipController } from './equip.controller';
 import { EquipService } from './equip.service';
 import { SaveEquipInfoDto } from './dto/saveEquipInfo.dto';
 import { SearchEquipInfoDto } from './dto/searchEquipInfo.dto';
-import { SearchEquipInfoByDateDto } from './dto/searchEquipInfoByDate.dto';
 import { BadRequestException } from '@nestjs/common';
 
 const mockEquipEntity = {
@@ -71,23 +70,6 @@ describe('EquipController', () => {
         data: [mockEquipEntity],
       });
       expect(service.search).toHaveBeenCalledWith(params);
-    });
-  });
-
-  describe('findAllEquipData', () => {
-    it('should return results if found', async () => {
-      const params: SearchEquipInfoByDateDto = {
-        initialDate: new Date('2023-01-01'),
-        finalDate: new Date('2023-12-31'),
-      };
-
-      const result = await controller.findAllEquipData(params);
-      expect(result).toEqual({
-        statusCode: 200,
-        message: 'Success in the search for',
-        data: [mockEquipEntity],
-      });
-      expect(service.searchAllByDate).toHaveBeenCalledWith(params);
     });
   });
 

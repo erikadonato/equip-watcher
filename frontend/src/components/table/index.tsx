@@ -7,6 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import { SearchEquipInfoDto } from '../../api/dto/searchEquipInfo.dto';
 
 interface Column {
   id: 'equipmentId' | 'value';
@@ -21,15 +22,9 @@ const columns: readonly Column[] = [
   { id: 'value', label: 'average value', minWidth: 100 },
 ];
 
-interface EquipmentProps {
-  nome: string;
-  email: string;
-  cpf: string;
-  id: string; 
-}
 
 interface EquipTableProps {
-  equipments: EquipmentProps[];
+  equipments: SearchEquipInfoDto[];
 }
 
 const EquipTable = ({ equipments }: EquipTableProps) => {
@@ -48,7 +43,7 @@ const EquipTable = ({ equipments }: EquipTableProps) => {
   if(equipments?.length > 0) {
     return (
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
+        <TableContainer>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
@@ -70,7 +65,7 @@ const EquipTable = ({ equipments }: EquipTableProps) => {
                   return (
                     <TableRow hover role="checkbox" tabIndex={-1} key={equipment.id}>
                       {columns.map((column) => {
-                        const value = equipment[column.id as keyof EquipmentProps];
+                        const value = equipment[column.id as keyof SearchEquipInfoDto];
                         return (
                           <TableCell key={column.id} align={column.align}>
                             {value}

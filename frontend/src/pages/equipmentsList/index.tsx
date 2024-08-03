@@ -1,11 +1,9 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import TextInput from '../../components/textInput';
+import React, { useEffect, useState } from 'react';
 import Header from '../../components/header';
 import EquipTable from '../../components/table';
 import Button from '@mui/material/Button';
 import './style.css';
-import AddEquipmentDataModal from '../../components/modalAddData';
-import { searchEquip} from '../../api';
+import { searchEquip, uploadEquipCsv} from '../../api';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Box from '@mui/material/Box';
@@ -14,11 +12,12 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Graphics } from '../../components/graphics';
+import { SearchEquipInfoDto } from '../../api/dto/searchEquipInfo.dto';
+import InputFileUpload from '../../components/buttonUploadFile';
 
 const EquipmentsList = () => {
-    const [openAdd, setOpenAdd] = React.useState(false);
-    const [equipments, setEquipments] = useState([]);
-    const [timeSelected, setTimeSelected] = React.useState('');
+    const [equipments, setEquipments] = useState<Array<SearchEquipInfoDto>>([]);
+    const [timeSelected, setTimeSelected] = useState('');
 
     const subtractDays = (date: Date, days: number) => {
         const result = new Date(date);
@@ -43,17 +42,25 @@ const EquipmentsList = () => {
             if(param) {
                 const option = options.find((item) => item.label === param)
                 const { data } = await searchEquip({initialDate: option?.initialDate, finalDate: date.toISOString()});
-                console.log('estou aqui', data)
                 setEquipments(data);
             } else {
                 const { data } = await searchEquip();
-                console.log('estou aqui2', data)
                 setEquipments(data);
             }
         } catch (error) {
             toast.error('Error on search data');
         }
     };
+
+    const handleFileUpload = async (event: any) => {
+        const file = event.target.files[0];
+        try {
+            await uploadEquipCsv(file)
+            toast.success('Success saving file')
+        } catch (error) {
+            toast.error('Error while saving file');
+        }
+      };
 
       useEffect(() => {
         loadEquipments()
@@ -87,13 +94,19 @@ const EquipmentsList = () => {
                 <div className="button-load" >
                     <Button variant="contained" onClick={() => loadEquipments(timeSelected)}>Search</Button>
                 </div>
-                <div className="button-add-equipment">
-                    <Button variant="contained" onClick={() => setOpenAdd(true)}>Upload CSV</Button>
-                    <AddEquipmentDataModal open={openAdd} setOpen={setOpenAdd} />
-                </div>
+
+               <InputFileUpload handleFileUpload={handleFileUpload} />
             </Header>
-            <EquipTable equipments={equipments} />
-            <Graphics />
+            {equipments?.length > 0 ? (
+                <div className="infos-area">
+                    <div className="table-info-area">
+                        <EquipTable equipments={equipments} />
+                    </div>
+                    <div className="graphic-info-area">
+                        <Graphics equipments={equipments} />
+                    </div>
+                </div>
+            ): <div>No results for this date</div>}
         </div>
     )
 }

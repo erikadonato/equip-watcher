@@ -3,4 +3,5 @@ export interface SearchEquipInfoDto {
   equipmentId?: string;
   initialDate?: string;
   finalDate?: string;
+  value?: number;
 }
