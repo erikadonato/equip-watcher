@@ -13,7 +13,6 @@ import { EquipService } from './equip.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from '../../shared/multer.config';
 import { SaveEquipInfoDto } from './dto/saveEquipInfo.dto';
-import { SearchEquipInfoByDateDto } from './dto/searchEquipInfoByDate.dto';
 
 @Controller('equip')
 export class EquipController {
@@ -27,16 +26,6 @@ export class EquipController {
   @Get('search')
   findEquipData(@Query() query: SearchEquipInfoDto) {
     return this.equipService.search(query);
-  }
-
-  @Get('search-all')
-  findAllEquipData(@Query() query: SearchEquipInfoByDateDto) {
-    if (!query || Object.keys(query).length === 0) {
-      throw new BadRequestException(
-        'Please provide at least one search parameter: initialDate or finalDate',
-      );
-    }
-    return this.equipService.searchAllByDate(query);
   }
 
   @Post('upload')

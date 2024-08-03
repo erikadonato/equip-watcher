@@ -3,11 +3,15 @@ import { SaveEquipInfoDto } from './dto/saveEquipInfoDto.dto';
 import { SearchEquipInfoDto } from './dto/searchEquipInfo.dto';
 import { SearchEquipInfoByDateDto } from './dto/searchEquipInfoByDate.dto';
 
-const BASE_URL = 'http://localhost:3000/equip';
+const BASE_URL = 'http://localhost:3001/equip';
 
 export const searchEquip = async (params?: SearchEquipInfoDto) => {
   try {
-    const response = await axios.get(`${BASE_URL}/search`, { params });
+    if(params) {
+      const response = await axios.get(`${BASE_URL}/search`, { params });
+      return response.data;
+    } 
+    const response = await axios.get(`${BASE_URL}/search`);
     return response.data;
   } catch (error) {
     return error;

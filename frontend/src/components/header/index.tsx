@@ -6,10 +6,7 @@ const Header = ({children}: any) => {
         <div className="header">
             <div className="title-area">
                 <div className="header-title">
-                    Students hub
-                </div>
-                <div className="header-subtitle">
-                    Pesquise, adicione, edite e delete alunos no sistema.
+                    Equipments hub
                 </div>
             </div>
             <div className="header-inputs-area">

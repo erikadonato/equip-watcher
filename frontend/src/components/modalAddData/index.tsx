@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, SetStateAction, ChangeEvent, useEffect } from 'react';
+import React, { useState, Dispatch, SetStateAction, ChangeEvent } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import TextInput from '../textInput';
 import './style.css';
-import { updateStudent } from '../../api';
+import { saveEquip } from '../../api';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -26,47 +26,33 @@ const style = {
 interface BasicModalProps {
   open: boolean; 
   setOpen: Dispatch<SetStateAction<boolean>>;
-  setReload: Dispatch<SetStateAction<boolean>>;
-  student: {
-    nome: string; 
-    email: string; 
-    cpf: string; 
-    id: string;
-  }
 }
 
-export default function EditStudantModal({open, setOpen, setReload, student}: BasicModalProps) {
-  const { id } = student;
+export default function AddEquipmentDataModal({open, setOpen}: BasicModalProps) {
   const [name, setName] = useState(""); 
   const [email, setEmail] = useState(""); 
   const [cpf, setCpf] = useState(""); 
 
-  const sendEditStudent = async () => {
-    if(name === "" || email === "" || cpf === "") {
-      toast.warn('Preencha todos os campos');
-      return
-    }
-    try {
-        const data = await updateStudent({nome: name, email, cpf, id});
-        if(data.statusCode === 200) {
-          toast.success('Cadastro atualizado com sucesso');
-          setOpen(false)
-          setReload(true);
-          return
-        }
-        if(data?.response?.request?.status !== 200 || data.statusCode !== 200){
-          toast.error('Erro ao atualizar aluno!');
-        }
-    } catch (error) {
-      toast.error('Erro ao cadastrar aluno!');
-    }
-  };
-
-  useEffect(() => {
-    setName(student.nome)
-    setEmail(student.email)
-    setCpf(student.cpf)
-  }, [student])
+  // const saveData = async () => {
+  //   if(name === "" || email === "" || cpf === "") {
+  //     toast.warn('Preencha todos os campos');
+  //     return
+  //   }
+  //   try {
+  //       const data = await saveEquip({nome: name, email, cpf});
+  //       if(data.statusCode === 200) {
+  //         toast.success('Aluno cadastrado com sucesso');
+  //         setOpen(false)
+  //         setReload(true);
+  //         return
+  //       }
+  //       if(data?.response?.request?.status !== 200 || data.statusCode !== 200){
+  //         toast.error('Erro ao cadastrar aluno!');
+  //       }
+  //   } catch (error) {
+  //     toast.error('Erro ao cadastrar aluno!');
+  //   }
+  // };
 
   return (
     <div>
@@ -85,7 +71,7 @@ export default function EditStudantModal({open, setOpen, setReload, student}: Ba
             </Tooltip>
           </div>
           <div className="modal-title">
-            Alterar cadastro de aluno
+            Upload CSV file
           </div>
           <div className="modal-inputs-area">
             <div className="modal-input-area">
@@ -93,6 +79,7 @@ export default function EditStudantModal({open, setOpen, setReload, student}: Ba
                 value={name}
                 label="Nome"
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)} 
+                required={true}
               />
             </div>
             <div className="modal-input-area">
@@ -100,6 +87,7 @@ export default function EditStudantModal({open, setOpen, setReload, student}: Ba
                 value={cpf}
                 label="Cpf"
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setCpf(e.target.value)} 
+                required={true}
               />
             </div>
             <div className="modal-input-area">
@@ -107,9 +95,9 @@ export default function EditStudantModal({open, setOpen, setReload, student}: Ba
                 value={email}
                 label="Email"
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                required={true}
               />
             </div>
-            <Button variant="contained" onClick={() => sendEditStudent()}>Salvar</Button>
           </div>
         </Box>
       </Modal>

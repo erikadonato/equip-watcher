@@ -1,4 +1,4 @@
-import React, { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,15 +7,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import Tooltip from '@mui/material/Tooltip';
-import { IconButton } from '@mui/material';
-import DeleteStudantModal from '../modalDeleteStudent';
-import EditStudantModal from '../modalEditStudent';
 
 interface Column {
-  id: 'nome' | 'email' | 'cpf';
+  id: 'equipmentId' | 'value';
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -23,29 +17,24 @@ interface Column {
 }
 
 const columns: readonly Column[] = [
-  { id: 'nome', label: 'Nome', minWidth: 170 },
-  { id: 'email', label: 'Email', minWidth: 100 },
-  { id: 'cpf', label: 'Cpf', minWidth: 100 },
+  { id: 'equipmentId', label: 'equipmentId', minWidth: 170 },
+  { id: 'value', label: 'average value', minWidth: 100 },
 ];
 
-interface StudentProps {
+interface EquipmentProps {
   nome: string;
   email: string;
   cpf: string;
   id: string; 
 }
 
-interface StudentsTableProps {
-  students: StudentProps[];
-  setReload: Dispatch<SetStateAction<boolean>>;
+interface EquipTableProps {
+  equipments: EquipmentProps[];
 }
 
-const StudentsTable = ({ students, setReload }: StudentsTableProps) => {
+const EquipTable = ({ equipments }: EquipTableProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [openEdit, setOpenEdit] = React.useState(false);
-  const [openDelete, setOpenDelete] = React.useState(false);
-  const [selectedStudent, setSelectedStudent] = useState({nome: '', email: '' , cpf:'', id: ''});
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -56,21 +45,9 @@ const StudentsTable = ({ students, setReload }: StudentsTableProps) => {
     setPage(0);
   };
 
-  const handleDeleteStudent = (student: StudentProps) => {
-    setSelectedStudent(student)
-    setOpenDelete(true)
-  }
-
-  const handleEditStudent = (student: StudentProps) => {
-    setSelectedStudent(student)
-    setOpenEdit(true)
-  }
-
-  if(students?.length > 0) {
+  if(equipments?.length > 0) {
     return (
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-        <DeleteStudantModal open={openDelete} setOpen={setOpenDelete} setReload={setReload} student={selectedStudent} />
-        <EditStudantModal open={openEdit} setOpen={setOpenEdit} setReload={setReload} student={selectedStudent} />
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
@@ -87,33 +64,19 @@ const StudentsTable = ({ students, setReload }: StudentsTableProps) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {students
+              {equipments
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((student) => {
+                .map((equipment) => {
                   return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={student.id}>
+                    <TableRow hover role="checkbox" tabIndex={-1} key={equipment.id}>
                       {columns.map((column) => {
-                        const value = student[column.id as keyof StudentProps];
+                        const value = equipment[column.id as keyof EquipmentProps];
                         return (
                           <TableCell key={column.id} align={column.align}>
                             {value}
                           </TableCell>
                         );
                       })}
-                      <TableCell>
-                        <Tooltip title="Deletar">
-                          <IconButton onClick={() => handleDeleteStudent(student)}>
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell>
-                        <Tooltip title="Editar">
-                          <IconButton onClick={() => handleEditStudent(student)}>
-                            <EditIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -123,7 +86,7 @@ const StudentsTable = ({ students, setReload }: StudentsTableProps) => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          count={students.length}
+          count={equipments.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -139,4 +102,4 @@ const StudentsTable = ({ students, setReload }: StudentsTableProps) => {
 
 };
 
-export default StudentsTable;
+export default EquipTable;
