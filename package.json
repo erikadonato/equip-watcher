@@ -1,0 +1,12 @@
+{
+    "name": "equip-watcher",
+    "version": "1.0.0",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "(cd frontend && yarn start) & (cd backend && yarn start)"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": ""
+  }
